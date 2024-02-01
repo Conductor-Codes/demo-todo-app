@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import StrideLogo from "./stride-logo-white.png";
+import StrideLogo from "./stride-logo-white.svg";
 
 function App() {
   const [todos, setTodos] = useState([]);

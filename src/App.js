@@ -16,6 +16,11 @@ function App() {
     setInput(event.target.value);
   };
 
+  const handleDeleteTodo = (index) => {
+    const newTodos = todos.filter((_, i) => i !== index);
+    setTodos(newTodos);
+  };
+
   return (
     <div className="App">
       <header className="App-Logo flex justify-center">
@@ -46,6 +51,13 @@ function App() {
                 key={index}
               >
                 &#x2022; {todo}
+                <button
+                  aria-label={`Delete ${todo}`}
+                  onClick={() => handleDeleteTodo(index)}
+                  className="btn mx-4"
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>

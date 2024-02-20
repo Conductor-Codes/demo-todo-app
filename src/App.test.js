@@ -29,7 +29,7 @@ test("deletes a todo item", async () => {
   await user.click(addButtonElement);
 
   // Verify the todo item is added
-  the todoElement = await screen.findByText(/Todo to be deleted/);
+  const todoElement = await screen.findByText(/Todo to be deleted/);
   expect(todoElement).toBeVisible();
 
   // Assuming a delete button is added next to each todo item
@@ -47,8 +47,8 @@ test("delete button visibility for each todo item", async () => {
 
   // Add two todo items
   const user = userEvent.setup();
-  the inputElement = screen.getByRole("textbox");
-  the addButtonElement = screen.getByRole("button", { name: /add todo/i });
+  const inputElement = screen.getByRole("textbox");
+  const addButtonElement = screen.getByRole("button", { name: /add todo/i });
 
   await user.type(inputElement, "First Todo");
   await user.click(addButtonElement);
@@ -56,9 +56,34 @@ test("delete button visibility for each todo item", async () => {
   await user.click(addButtonElement);
 
   // Check for delete buttons
-  the deleteButtons = screen.getAllByText(/delete/i);
+  const deleteButtons = screen.getAllByText(/delete/i);
   expect(deleteButtons.length).toBe(2);
   deleteButtons.forEach(button => {
     expect(button).toBeVisible();
+  });
+});
+
+test("interface updates after deleting a todo item", async () => {
+  const user = userEvent.setup();
+  render(<App />);
+
+  // Add a todo item first
+  const inputElement = screen.getByRole("textbox");
+  const addButtonElement = screen.getByRole("button", { name: /add todo/i });
+
+  await user.type(inputElement, "Todo to be visually deleted");
+  await user.click(addButtonElement);
+
+  // Verify the todo item is added
+  const todoElement = await screen.findByText(/Todo to be visually deleted/);
+  expect(todoElement).toBeVisible();
+
+  // Assuming a delete button is added next to each todo item
+  const deleteButtonElement = screen.getByRole("button", { name: /delete/i });
+  await user.click(deleteButtonElement);
+
+  // Verify the interface updates to show that the item has been deleted
+  await waitFor(() => {
+    expect(screen.queryByText(/Todo to be visually deleted/)).not.toBeInTheDocument();
   });
 });

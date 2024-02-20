@@ -1,0 +1,5 @@
+User Story:As a user, I want a 'delete' button for my Todo items so that I can easily remove tasks that are no longer needed.
+Acceptance Criteria:
+	•	There is a delete option visible for each Todo item.
+	•	Clicking it successfully removes the item from my list.
+	•	The interface updates to show that the item has been deleted.

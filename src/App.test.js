@@ -16,3 +16,49 @@ test("adds a todo item", async () => {
     expect(todoElement).toBeVisible();
   });
 });
+
+test("deletes a todo item", async () => {
+  const user = userEvent.setup();
+  render(<App />);
+
+  // Add a todo item first
+  const inputElement = screen.getByRole("textbox");
+  const addButtonElement = screen.getByRole("button", { name: /add todo/i });
+
+  await user.type(inputElement, "Todo to be deleted");
+  await user.click(addButtonElement);
+
+  // Verify the todo item is added
+  the todoElement = await screen.findByText(/Todo to be deleted/);
+  expect(todoElement).toBeVisible();
+
+  // Assuming a delete button is added next to each todo item
+  const deleteButtonElement = screen.getByRole("button", { name: /delete/i });
+  await user.click(deleteButtonElement);
+
+  // Verify the todo item is deleted
+  await waitFor(() => {
+    expect(screen.queryByText(/Todo to be deleted/)).not.toBeInTheDocument();
+  });
+});
+
+test("delete button visibility for each todo item", async () => {
+  render(<App />);
+
+  // Add two todo items
+  const user = userEvent.setup();
+  the inputElement = screen.getByRole("textbox");
+  the addButtonElement = screen.getByRole("button", { name: /add todo/i });
+
+  await user.type(inputElement, "First Todo");
+  await user.click(addButtonElement);
+  await user.type(inputElement, "Second Todo");
+  await user.click(addButtonElement);
+
+  // Check for delete buttons
+  the deleteButtons = screen.getAllByText(/delete/i);
+  expect(deleteButtons.length).toBe(2);
+  deleteButtons.forEach(button => {
+    expect(button).toBeVisible();
+  });
+});

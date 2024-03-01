@@ -1,1 +1,1 @@
-add the capabaility to delete my todo items
+add the capabaility to delete my todo items, the button should be pink

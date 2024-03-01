@@ -41,3 +41,20 @@ test("deletes a todo item", async () => {
     expect(screen.queryByText(/Todo to be deleted/)).not.toBeInTheDocument();
   });
 });
+
+test("delete button is pink", async () => {
+  render(<App />);
+
+  // Add a todo item to ensure a delete button is rendered
+  const user = userEvent.setup();
+  const inputElement = screen.getByRole("textbox");
+  const addButtonElement = screen.getByRole("button", { name: /add todo/i });
+  await user.type(inputElement, "Todo for color check");
+  await user.click(addButtonElement);
+
+  // Find the delete button
+  const deleteButtonElement = screen.getByRole("button", { name: /delete/i });
+
+  // Check if the delete button has the correct pink color class
+  expect(deleteButtonElement).toHaveClass("btn-error");
+});

@@ -1,0 +1,7 @@
+conductor:
+  include_file_formats:
+  - js
+  - jsx
+  language: javascript
+  test_command: npm run test
+  test_regex: ^.*\.test\.(js|jsx)$

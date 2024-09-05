@@ -23,10 +23,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.idea/
-
-# conductor
 .conductor/
-
-# production
-/build/
+.codeapi/
+build/
+.idea.conductor/

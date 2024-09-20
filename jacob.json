@@ -1,0 +1,16 @@
+{
+  "language": "JavaScript",
+  "installCommand": "npm install",
+  "formatCommand": "",
+  "buildCommand": "npm run build",
+  "style": "Tailwind",
+  "iconSet": "Font Awesome",
+  "directories": {
+    "components": "/src/components",
+    "pages": "/src/pages",
+    "styles": "/src",
+    "tailwindConfig": "/tailwind.config.js",
+    "staticAssets": "/src"
+  },
+  "env": ""
+}

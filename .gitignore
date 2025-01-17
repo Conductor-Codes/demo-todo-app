@@ -28,3 +28,7 @@ yarn-error.log*
 build/
 .idea.conductor/
 /.codeapi/
+# Directory for Stride Conductor local files
+.conductor/task.txt
+.conductor/story_context.md
+.conductor/config.yml

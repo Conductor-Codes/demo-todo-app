@@ -1,61 +1,78 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import App from './App';
+import { DragDropContext } from 'react-beautiful-dnd';
 
-describe('App Component', () => {
-  test('renders Stride logo', () => {
+// Mock react-beautiful-dnd
+jest.mock('react-beautiful-dnd', () => ({
+  Droppable: ({ children }) => children({
+    droppableProps: {
+      'data-rbd-droppable-id': 'test-id',
+    },
+    innerRef: jest.fn(),
+    placeholder: null,
+  }),
+  Draggable: ({ children }) => children({
+    draggableProps: {
+      'data-rbd-draggable-id': 'test-id',
+    },
+    innerRef: jest.fn(),
+    dragHandleProps: null,
+  }),
+  DragDropContext: ({ children }) => children,
+}));
+
+describe('Todo App', () => {
+  test('renders the main heading', () => {
     render(<App />);
-    const logo = screen.getByAltText('Stride');
-    expect(logo).toBeInTheDocument();
+    expect(screen.getByText(/what would you like to do\?/i)).toBeInTheDocument();
   });
 
-  test('renders input field and add button', () => {
+  test('adds a new todo when form is submitted', () => {
     render(<App />);
-    const inputField = screen.getByRole('textbox');
-    const addButton = screen.getByRole('button', { name: /add todo/i });
-    expect(inputField).toBeInTheDocument();
-    expect(addButton).toBeInTheDocument();
+    const input = screen.getByLabelText(/new todo input/i);
+    const submitButton = screen.getByText(/add todo/i);
+
+    fireEvent.change(input, { target: { value: 'Test Todo' } });
+    fireEvent.click(submitButton);
+
+    expect(screen.getByText(/Test Todo/)).toBeInTheDocument();
   });
 
-  test('adds a new todo item when form is submitted', () => {
+  test('does not add empty todos', () => {
     render(<App />);
-    const inputField = screen.getByRole('textbox');
-    const addButton = screen.getByRole('button', { name: /add todo/i });
-
-    fireEvent.change(inputField, { target: { value: 'New Todo' } });
-    fireEvent.click(addButton);
-
-    const todoItem = screen.getByText(/new todo/i);
-    expect(todoItem).toBeInTheDocument();
+    const submitButton = screen.getByText(/add todo/i);
+    
+    fireEvent.click(submitButton);
+    const todos = screen.queryByRole('listitem');
+    
+    expect(todos).not.toBeInTheDocument();
   });
 
-  test('clears input field after adding a todo', () => {
+  test('clears input after adding todo', () => {
     render(<App />);
-    const inputField = screen.getByRole('textbox');
-    const addButton = screen.getByRole('button', { name: /add todo/i });
+    const input = screen.getByLabelText(/new todo input/i);
+    const submitButton = screen.getByText(/add todo/i);
 
-    fireEvent.change(inputField, { target: { value: 'Another Todo' } });
-    fireEvent.click(addButton);
+    fireEvent.change(input, { target: { value: 'Test Todo' } });
+    fireEvent.click(submitButton);
 
-    expect(inputField).toHaveValue('');
+    expect(input.value).toBe('');
   });
 
-  test('renders multiple todo items', () => {
+  test('adds multiple todos and maintains them in the list', () => {
     render(<App />);
-    const inputField = screen.getByRole('textbox');
-    const addButton = screen.getByRole('button', { name: /add todo/i });
+    const input = screen.getByLabelText(/new todo input/i);
+    const submitButton = screen.getByText(/add todo/i);
 
-    fireEvent.change(inputField, { target: { value: 'First Todo' } });
-    fireEvent.click(addButton);
+    // Add first todo
+    fireEvent.change(input, { target: { value: 'First Todo' } });
+    fireEvent.click(submitButton);
 
-    fireEvent.change(inputField, { target: { value: 'Second Todo' } });
-    fireEvent.click(addButton);
+    // Add second todo
+    fireEvent.change(input, { target: { value: 'Second Todo' } });
+    fireEvent.click(submitButton);
 
-    const firstTodo = screen.getByText(/first todo/i);
-    const secondTodo = screen.getByText(/second todo/i);
-
-    expect(firstTodo).toBeInTheDocument();
-    expect(secondTodo).toBeInTheDocument();
+    expect(screen.getByText(/First Todo/)).toBeInTheDocument();
+    expect(screen.getByText(/Second Todo/)).toBeInTheDocument();
   });
 });

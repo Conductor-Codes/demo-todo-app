@@ -1,61 +1,52 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import App from './App';
 
-describe('App Component', () => {
-  test('renders Stride logo', () => {
+describe('Todo App', () => {
+  test('renders main heading', () => {
     render(<App />);
-    const logo = screen.getByAltText('Stride');
-    expect(logo).toBeInTheDocument();
+    const heading = screen.getByText(/what would you like to do\?/i);
+    expect(heading).toBeInTheDocument();
   });
 
-  test('renders input field and add button', () => {
+  test('can add a new todo', () => {
     render(<App />);
-    const inputField = screen.getByRole('textbox');
-    const addButton = screen.getByRole('button', { name: /add todo/i });
-    expect(inputField).toBeInTheDocument();
-    expect(addButton).toBeInTheDocument();
-  });
+    const input = screen.getByRole('textbox');
+    const addButton = screen.getByText(/add todo/i);
 
-  test('adds a new todo item when form is submitted', () => {
-    render(<App />);
-    const inputField = screen.getByRole('textbox');
-    const addButton = screen.getByRole('button', { name: /add todo/i });
-
-    fireEvent.change(inputField, { target: { value: 'New Todo' } });
+    fireEvent.change(input, { target: { value: 'New Todo Item' } });
     fireEvent.click(addButton);
 
-    const todoItem = screen.getByText(/new todo/i);
+    const todoItem = screen.getByText(/New Todo Item/);
     expect(todoItem).toBeInTheDocument();
   });
 
-  test('clears input field after adding a todo', () => {
+  test('does not add empty todos', () => {
     render(<App />);
-    const inputField = screen.getByRole('textbox');
-    const addButton = screen.getByRole('button', { name: /add todo/i });
-
-    fireEvent.change(inputField, { target: { value: 'Another Todo' } });
+    const addButton = screen.getByText(/add todo/i);
+    
     fireEvent.click(addButton);
-
-    expect(inputField).toHaveValue('');
+    const todoItems = screen.queryByRole('listitem');
+    expect(todoItems).not.toBeInTheDocument();
   });
 
-  test('renders multiple todo items', () => {
+  test('can delete a todo', () => {
     render(<App />);
-    const inputField = screen.getByRole('textbox');
-    const addButton = screen.getByRole('button', { name: /add todo/i });
-
-    fireEvent.change(inputField, { target: { value: 'First Todo' } });
+    
+    // Add a todo first
+    const input = screen.getByRole('textbox');
+    const addButton = screen.getByText(/add todo/i);
+    fireEvent.change(input, { target: { value: 'Todo to delete' } });
     fireEvent.click(addButton);
-
-    fireEvent.change(inputField, { target: { value: 'Second Todo' } });
-    fireEvent.click(addButton);
-
-    const firstTodo = screen.getByText(/first todo/i);
-    const secondTodo = screen.getByText(/second todo/i);
-
-    expect(firstTodo).toBeInTheDocument();
-    expect(secondTodo).toBeInTheDocument();
+    
+    // Verify todo was added
+    const todoItem = screen.getByText(/Todo to delete/);
+    expect(todoItem).toBeInTheDocument();
+    
+    // Delete the todo
+    const deleteButton = screen.getByRole('button', { name: /delete todo/i });
+    fireEvent.click(deleteButton);
+    
+    // Verify todo was removed
+    expect(screen.queryByText(/Todo to delete/)).not.toBeInTheDocument();
   });
 });

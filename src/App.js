@@ -8,12 +8,18 @@ function App() {
 
   const handleAddTodo = (event) => {
     event.preventDefault();
-    setTodos([...todos, input]);
-    setInput("");
+    if (input.trim()) {
+      setTodos([...todos, input]);
+      setInput("");
+    }
   };
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
+  };
+
+  const handleDelete = (indexToDelete) => {
+    setTodos(todos.filter((_, index) => index !== indexToDelete));
   };
 
   return (
@@ -30,6 +36,7 @@ function App() {
               value={input}
               onChange={handleInputChange}
               className="input input-bordered w-full max-w-xs mx-4"
+              placeholder="Enter a todo"
             />
 
             <button type="submit" className="btn mx-4">
@@ -42,12 +49,19 @@ function App() {
           <ul>
             {todos.map((todo, index) => (
               <li
-                className="TextColor text-xl text-left mx-auto w-3/5 pt-4"
+                className="TextColor text-xl text-left mx-auto w-3/5 pt-4 flex justify-between items-center"
                 key={index}
               >
-                &#x2022; {todo}
+                <span>&#x2022; {todo}</span>
+                <button
+                  onClick={() => handleDelete(index)}
+                  className="btn btn-sm btn-error"
+                  aria-label="Delete todo"
+                >
+                  Delete
+                </button>
               </li>
-            ))}
+            ))}>
           </ul>
         </div>
       </div>
